@@ -4,23 +4,23 @@ import numpy as np
 # Create figure
 fig = go.Figure()
 
-data = open('data_6', 'r')
+data = open('data_18', 'r')
 X = []
 Y = []
 c = 0
 for line in data:
-    if(c % 9 == 0):
+    if(c % 3 == 0):
         X.append([ line.split()[a] for a in range(0, len(line.split()), 3)])
         Y.append([ line.split()[a+1] for a in range(0, len(line.split()), 3)])
     c+=1
 print (c)
 for x in X:
-    x.append(-5)
-    x.append(15)
+    x.append(-30)
+    x.append(30)
 
 for y in Y:
-    y.append(-5)
-    y.append(15)
+    y.append(-30)
+    y.append(30)
 
 e_num = len(X)
 # Add traces, one for each slider step

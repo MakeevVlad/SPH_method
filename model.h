@@ -21,7 +21,7 @@ public:
 	double energy;
 
 	
-	double h = 3; //Smooth radius
+	double h = 2; //Smooth radius
 	
 	double get_mass();
 	double get_rad();
@@ -39,13 +39,34 @@ public:
 
 };
 
+
+//Functor to find neighbours for the particle
+class Neighbour
+{
+public:
+	std::vector<std::vector<std::vector<size_t>>> web;
+	size_t size;
+
+	Neighbour(size_t);
+
+	void init(std::vector<Particle>&);
+	void resize(size_t);
+	void fitsize(int, int);
+
+	//Returns vector with neighbours' numbers
+	std::vector<size_t> operator()(Particle&);
+
+};
+
+
+//Computing schemes
 void eiler_scheme(std::vector<Particle>&, Kernel&, double, size_t);
 void advanced_scheme(std::vector<Particle>&, Kernel&, double, size_t);
 
-bool neighbour(Particle&, Particle&);
+bool nei(Particle&, Particle&);
 
 // particle's axeleration, dv/dt 
-vec3 ax(size_t, std::vector<Particle>&, Kernel&);
+vec3 ax(size_t, std::vector<Particle>&, Kernel&, Neighbour&);
 double energy(std::vector<Particle>&); 
 
 
@@ -67,17 +88,3 @@ vec3	rotVel(size_t, std::vector<Particle>&, Kernel&);
 double U_lj(vec3, vec3);
 
 
-//Functor to find neighbours for the particle
-class Neighbour
-{ 
-public:
-	std::vector<std::vector<std::vector<size_t>>> web;
-
-	Neighbour(size_t);
-
-	void init(std::vector<Particle>&);
-
-	//Returns vector with neighbours' numbers
-	std::vector<size_t> operator()(Particle&);
-	
-};
