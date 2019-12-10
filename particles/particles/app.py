@@ -7,6 +7,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QAction, QSlider, QVBoxLayout, QPushButton, \
     QGridLayout, QWidget, QHBoxLayout, QToolButton, QStatusBar
 
+from particles.jump_slider import QJumpSlider
 from particles.vis import ParticleVisualizer
 from settings import _resource_path, SAMPLE_DATA_FILE, BASE_DIR, MAX_RECENTS, RECENTS_PATH, MAX_RECENT_LENGTH
 
@@ -74,12 +75,18 @@ class MainWindow(QMainWindow):
         vbox.setContentsMargins(0, 0, 0, 0)
 
         self._vis = ParticleVisualizer()
+        self._vis.posChange.connect(self._on_pos_change)
         vbox.addWidget(self._vis, stretch=1)
 
         hbox = QHBoxLayout(self)
-        slider = self._slider = QSlider(QtCore.Qt.Horizontal)
-        slider.setTickPosition(QSlider.TicksBothSides)
+        slider = self._slider = QJumpSlider(QtCore.Qt.Horizontal)
+        slider.setTickPosition(QJumpSlider.TicksBothSides)
+        slider.setMaximum(0)
+        slider.setMaximum(99)
+        slider.setTickInterval(1)
         slider.setEnabled(False)
+        slider.sliderMoved.connect(self._jump_to_pos)
+        slider.gaugeClick.connect(self._jump_to_pos)
         hbox.addWidget(self._slider)
         hbox.setContentsMargins(10, 5, 10, 10)
         vbox.addLayout(hbox)
@@ -108,6 +115,7 @@ class MainWindow(QMainWindow):
         self._recents_menu.setEnabled(len(self._get_recents()))
 
     def _set_recents_menu(self):
+        self._recents_menu.clear()
         recents = self._get_recents()
         for recent_path, is_valid in recents:
             name = recent_path if len(recent_path) <= MAX_RECENT_LENGTH else f'...{recent_path[-MAX_RECENT_LENGTH:]}'
@@ -121,7 +129,7 @@ class MainWindow(QMainWindow):
         path = filename[0]
         if path:
             self._load_data_file(path)
-        self._add_path_to_recents(path)
+            self._add_path_to_recents(path)
 
     def _load_sample(self):
         self._load_data_file(SAMPLE_DATA_FILE)
@@ -142,9 +150,16 @@ class MainWindow(QMainWindow):
         self._set_title(os.path.basename(path))
         self._vis.set_data_file(path, auto_play=True)
         self._toolbar.setEnabled(True)
+        self._slider.setEnabled(True)
 
     def _set_title(self, filename=None):
         self.setWindowTitle('Particles' if not filename else f'Particles [{filename}]')
+
+    def _jump_to_pos(self, pos):
+        self._vis.jump_to_pos(pos)
+
+    def _on_pos_change(self, pos):
+        self._slider.setValue(pos)
 
 
 def main():
