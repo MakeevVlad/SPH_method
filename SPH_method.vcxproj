@@ -57,6 +57,9 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
     </CudaCompile>
+    <CudaLink>
+      <PerformDeviceLink>false</PerformDeviceLink>
+    </CudaLink>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -82,11 +85,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="model.h" />
+    <ClInclude Include="particle.h" />
     <ClInclude Include="SPH.h" />
     <ClInclude Include="Vmath.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="Neighbour.cpp" />
+    <ClCompile Include="particle.cpp" />
+    <ClCompile Include="schemes.cpp" />
     <ClCompile Include="SPH.cpp" />
     <ClCompile Include="Vmath.cpp" />
   </ItemGroup>

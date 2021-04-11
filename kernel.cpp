@@ -6,73 +6,70 @@
 #include <fstream>
 #include <vector>
 #include <cmath>
+#include <ctime>
 
-#include "Vmath.h"
-#include "Model.h"
+#include "model.h"
 
 
 
 int main()
 {
 
-	const int N = 400;
-	double dt = 0.0025;
+	const int N = 6 * 18 + 4 * 6;
+	double dt = 0.0025/4;
 	
-	double t = 1;
+	double t = 6;
 
 	Kernel kernel(2);
 	std::vector<Particle> particle(N);
 
-	double x = -10;
-	double y = -10;
 
-	size_t c = 0;
-	for (size_t i = 0; i < particle.size(); ++i)
-	{
-
-		if (i % 20 == 0 && i != 0)
+	int c = 0;
+	for(double i = 0; i<6; ++i)
+		for (double j = 0; j < 18; ++j)
 		{
-			x = -10; 
-			y += 1;
+			if((int)i % 2 == 0)
+				particle[c].set_pos(i*0.86, j + 0.5, 0);
+			else
+				particle[c].set_pos(i * 0.86, j, 0);
+			//particle[c].set_vel((rand() % 2 - 1) * 1, (rand() % 2 - 1) * 1, 0);
+			particle[c].set_prop(100, 1);
 			++c;
+			system("cls");
+			std::cout << "Getenrating particles: " << c << "/" << N << std::endl;
 		}
-		particle[i].set_pos(x, y, 0);
-		//particle[i].set_vel((rand() % 10 - 5) * 0.01, (rand() % 10 - 5) * 0.01, (rand() % 10 - 5) * 0.01);
-		particle[i].set_prop(100, 1);
-		x += 1;
 
-		system("cls");
-		std::cout << "Getenrating particles: " << i << "/" << N <<std::endl;
-	}
-	particle.resize(N + 4);
-	particle[N].set_pos(-11, 0, 0);
-	particle[N+1].set_pos(-12, 0, 0);
-	particle[N+2].set_pos(-11, -1, 0);
-	particle[N+3].set_pos(-12, -1, 0);
-	particle[N].set_vel(11, 0, 0);
-	particle[N + 1].set_vel(11, 0, 0);
-	particle[N + 2].set_vel(11, 0, 0);
-	particle[N + 3].set_vel(11, 0, 0);
-	particle[N].set_prop(500, 1);
-	particle[N + 1].set_prop(500, 1);
-	particle[N + 2].set_prop(500, 1);
-	particle[N + 3].set_prop(500, 1);
 	
-	std::ofstream file("data_19");
+	for (double i = 0; i < 6; ++i)
+		for (double j = 0; j < 4; ++j)
+		{
+			particle[c].set_pos(i + 10, j + 6, 0);
+			particle[c].set_vel( -10, 0, 0);
+			particle[c].set_prop(25, 1);
+			++c;
+			system("cls");
+			std::cout << "Getenrating particles: " << c << "/" << N << std::endl;
+		}
+	
+	
+	std::ofstream file("test.txt");
 	//std::ofstream energy("data_6_en");
 
 	size_t i = 0;
 	//double energy = 0;
+	unsigned int start_time = clock();
 	while (i < t / dt)
 	{
 
-		advanced_scheme(particle, kernel, dt, i);
+		//advanced_scheme(particle, kernel, dt, i);
+		eiler_scheme(particle, kernel, dt, i);
 
-
-		system("cls");
-		std::cout << "Progress: " << i * dt * 100 / t << " % "<<std::endl
-				  << "interior time = " << i*dt << " s";
-		
+		if (i % (int)(t * 0.1 / dt) == 0)
+		{
+			system("cls");
+			std::cout << "Progress: " << i * dt * 100 / t << " % "<<std::endl
+					  << "interior time = " << i*dt << " s";
+		}
 
 		for (auto& p : particle)
 			file << p.pos.x << " " << p.pos.y << " " << p.pos.z << " ";
@@ -80,6 +77,8 @@ int main()
 
 		++i;
 	}
+	unsigned int end_time = clock();
+	std::cout << std::endl << (end_time - start_time) / i;
 
 	file.close();
 

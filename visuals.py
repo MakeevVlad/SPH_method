@@ -1,62 +1,33 @@
-import plotly.graph_objects as go
+from numpy import sin, cos
 import numpy as np
+import matplotlib.pyplot as plt
+import scipy.integrate as integrate
+import matplotlib.animation as animation
 
-# Create figure
-fig = go.Figure()
 
-data = open('data_18', 'r')
-X = []
-Y = []
-c = 0
-for line in data:
-    if(c % 3 == 0):
-        X.append([ line.split()[a] for a in range(0, len(line.split()), 3)])
-        Y.append([ line.split()[a+1] for a in range(0, len(line.split()), 3)])
-    c+=1
-print (c)
-for x in X:
-    x.append(-30)
-    x.append(30)
 
-for y in Y:
-    y.append(-30)
-    y.append(30)
 
-e_num = len(X)
-# Add traces, one for each slider step
-for epoch in np.arange(e_num):
-    fig.add_trace(
-        go.Scatter(
-            visible=False,
-            mode='markers',
-            marker = dict(size = 3),
-            name=str(epoch),
-            x=X[epoch],
-            y=Y[epoch]
-        ))
 
-# Make 10th trace visible
-fig.data[10].visible = True
+fig = plt.figure(figsize=(5, 4))
+ax = fig.add_subplot(111, autoscale_on=False, xlim=(-5, 20), ylim=(-5, 20))
+ax.set_aspect('equal')
+ax.grid()
 
-# Create and add slider
-steps = []
-for i in range(len(fig.data)):
-    step = dict(
-        method="restyle",
-        args=["visible", [False] * len(fig.data)],
-    )
-    step["args"][1][i] = True  # Toggle i'th trace to "visible"
-    steps.append(step)
+line, = ax.plot([], [], 'o-', ls='none')
+time_template = 'time = %.1fs'
+time_text = ax.text(0.05, 0.9, '', transform=ax.transAxes)
 
-sliders = [dict(
-    active=10,
-    currentvalue={"prefix": "Epoch: "},
-    pad={"t": 50},
-    steps=steps
-)]
+data = np.loadtxt('test.txt')
+def animate(i):
+    thisx = data[i*10][np.array([a for a in np.arange(0, 132*3, 3)])]
+    thisy = data[i*10][np.array([a+1 for a in np.arange(0, 132*3, 3)])]
 
-fig.update_layout(
-    sliders=sliders
-)
+    line.set_data(thisx, thisy)
+    #time_text.set_text(time_template % (i*dt))
+    return line, time_text
 
-fig.show()
+plt.style.use('seaborn-pastel')
+ani = animation.FuncAnimation(
+    fig, animate, 960, interval=1, blit=True)
+#ani.save('wallandbullet3.gif', writer='imagemagick', fps = 30)
+plt.show()

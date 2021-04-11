@@ -21,6 +21,15 @@
     <ClCompile Include="SPH.cpp">
       <Filter>res</Filter>
     </ClCompile>
+    <ClCompile Include="Neighbour.cpp">
+      <Filter>res</Filter>
+    </ClCompile>
+    <ClCompile Include="particle.cpp">
+      <Filter>res</Filter>
+    </ClCompile>
+    <ClCompile Include="schemes.cpp">
+      <Filter>res</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="model.h">
@@ -30,6 +39,9 @@
       <Filter>hdr</Filter>
     </ClInclude>
     <ClInclude Include="SPH.h">
+      <Filter>hdr</Filter>
+    </ClInclude>
+    <ClInclude Include="particle.h">
       <Filter>hdr</Filter>
     </ClInclude>
   </ItemGroup>

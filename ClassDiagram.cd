@@ -15,7 +15,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="vec3">
-    <Position X="4.75" Y="3.25" Width="3.5" />
+    <Position X="5.75" Y="3.25" Width="3.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAACBAAAAAAQAAQAAAAAAAAAAAABgAQAABAA=</HashCode>
       <FileName>Vmath.h</FileName>

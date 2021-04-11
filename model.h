@@ -2,49 +2,14 @@
 #pragma once
 #include "Vmath.h"
 #include "SPH.h"
-
-
-
-
-class Particle
-{
-private:
-	double mass, rad; //Mass and radius
-
-public:
-
-	Particle();
-
-	vec3 pos; //Position radius-vector
-	vec3 vel; //Velosity vector
-	vec3 ax; //Axeleration vector
-	double energy;
-
-	
-	double h = 2; //Smooth radius
-	
-	double get_mass();
-	double get_rad();
-
-	void set_prop(double, double);
-
-	void set_pos(double, double, double);
-	void set_pos(vec3);
-
-	void set_vel(double, double, double);
-	void set_vel(vec3);
-
-	void set_ax(double, double, double);
-	void set_ax(vec3);
-
-};
+#include "particle.h"
 
 
 //Functor to find neighbours for the particle
 class Neighbour
 {
 public:
-	std::vector<std::vector<std::vector<size_t>>> web;
+	std::vector<std::vector<size_t>> web;
 	size_t size;
 
 	Neighbour(size_t);
@@ -54,7 +19,7 @@ public:
 	void fitsize(int, int);
 
 	//Returns vector with neighbours' numbers
-	std::vector<size_t> operator()(Particle&);
+	std::vector<size_t> operator()(size_t n);
 
 };
 
