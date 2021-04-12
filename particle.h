@@ -14,8 +14,12 @@ public:
 	vec3 ax; //Axeleration vector
 	double energy;
 
+	double density;
+	double pressure;
 
 	double h = 3; //Smooth radius
+	double gamma = 1;
+	double A = 1; //Const dep on env
 
 	double get_mass();
 	double get_rad();
@@ -30,5 +34,7 @@ public:
 
 	void set_ax(double, double, double);
 	void set_ax(vec3);
+
+	void refresh();
 
 };

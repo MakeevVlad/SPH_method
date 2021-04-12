@@ -10,15 +10,18 @@
 
 #include "model.h"
 
-
+bool bounds(vec3 pos)
+{
+	return 0;
+}
 
 int main()
 {
 
 	const int N = 6 * 18 + 4 * 6;
-	double dt = 0.0025/4;
+	double dt = 0.001;
 	
-	double t = 6;
+	double t = 2;
 
 	Kernel kernel(2);
 	std::vector<Particle> particle(N);
@@ -44,7 +47,7 @@ int main()
 		for (double j = 0; j < 4; ++j)
 		{
 			particle[c].set_pos(i + 10, j + 6, 0);
-			particle[c].set_vel( -10, 0, 0);
+			particle[c].set_vel( -20, 0, 0);
 			particle[c].set_prop(25, 1);
 			++c;
 			system("cls");
@@ -62,7 +65,7 @@ int main()
 	{
 
 		//advanced_scheme(particle, kernel, dt, i);
-		eiler_scheme(particle, kernel, dt, i);
+		eiler_scheme(particle, kernel, dt, i, bounds);
 
 		if (i % (int)(t * 0.1 / dt) == 0)
 		{
@@ -70,11 +73,11 @@ int main()
 			std::cout << "Progress: " << i * dt * 100 / t << " % "<<std::endl
 					  << "interior time = " << i*dt << " s";
 		}
-
+		
 		for (auto& p : particle)
 			file << p.pos.x << " " << p.pos.y << " " << p.pos.z << " ";
 		file << std::endl;
-
+		
 		++i;
 	}
 	unsigned int end_time = clock();

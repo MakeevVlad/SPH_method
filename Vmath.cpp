@@ -50,6 +50,13 @@ vec3 vec3::operator- (vec3 other)
 	res.z = z - other.z;
 	return res;
 }
+vec3 vec3::operator-= (vec3& other)
+{
+	x -= other.x;
+	y -= other.y;
+	z -= other.z;
+	return *this;
+}
 vec3 vec3::operator*(double c)
 {
 	vec3 res(x * c, y * c, z * c);
@@ -88,7 +95,10 @@ double vec3::abs()
 {
 	return sqrt(x * x + y * y + z * z);
 }
-
+double vec3::abssq()
+{
+	return x * x + y * y + z * z;
+}
 double vec3::proj(vec3 other)
 {
 	return this->abs() * cos(*this, other) ;

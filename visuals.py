@@ -29,5 +29,5 @@ def animate(i):
 plt.style.use('seaborn-pastel')
 ani = animation.FuncAnimation(
     fig, animate, 960, interval=1, blit=True)
-#ani.save('wallandbullet3.gif', writer='imagemagick', fps = 30)
-plt.show()
+ani.save('wallandbullet3.gif', writer='imagemagick', fps = 30)
+#plt.show()

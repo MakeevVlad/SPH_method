@@ -6,19 +6,22 @@ double dens(size_t n, std::vector<Particle>& particle, Kernel& kernel)
 {
 	double dens = 0;
 	for (Particle& p : particle)
-		if (nei(particle[n], p))
-			dens += p.get_mass()* kernel.W(particle[n].pos, p.pos, particle[n].h);
+		dens += p.get_mass()* kernel.W(particle[n].pos, p.pos, particle[n].h);
 
 	return dens;
 }
 double dens(size_t n, std::vector<Particle>& particle, Kernel& kernel, Neighbour& neighbour)
 {
 	double dens = 0;
+#pragma omp parallel for reduction(+:dens)
 	for (size_t i : neighbour(n))
-		if (nei(particle[n], particle[i]))
-			dens += particle[i].get_mass() * kernel.W(particle[n].pos, particle[i].pos, particle[n].h);
+		dens += particle[i].get_mass() * kernel.W(particle[n].pos, particle[i].pos, particle[n].h);
 
 	return dens;
+}
+double press(size_t n, std::vector<Particle>& particle, Kernel& kernel, Neighbour& neighbour)
+{
+	return particle[n].A * pow(particle[n].density, particle[n].gamma);
 }
 
 void adapt_h(size_t n, double dt, std::vector<Particle>& particle, Kernel& kernel)
@@ -71,20 +74,45 @@ vec3 rotVel(size_t n, double dt, std::vector<Particle>& particle, Kernel& kernel
 	return rotV / dens(n, particle, kernel);
 }
 
-
+void refresh(std::vector<Particle>& particle, Kernel& kernel, Neighbour& neighbour)
+{
+	for (size_t i = 0; i < particle.size(); ++i)
+	{
+		particle[i].density = dens(i, particle, kernel, neighbour);
+		particle[i].pressure = press(i, particle, kernel, neighbour);
+	}
+}
 
 
 
 vec3 ax(size_t n, std::vector<Particle>& particle, Kernel& kernel, Neighbour& neighbour)
 {
-	vec3 ax (0, 0, 0);
 	
+
+	vec3 ax (0, 0, 0);
+	#pragma omp parallel for reduction(+:ax)
 	for (size_t i : neighbour(n))
 	{
-		if (i != n && nei(particle[n], particle[i]))
-			ax += kernel.gradW(particle[n].pos, particle[i].pos, 1) *
-			particle[i].get_mass() * U_lj(particle[n].pos, particle[i].pos) / dens(n, particle, kernel, neighbour);
-		else continue;
+		if (i != n )
+			ax += kernel.gradW(particle[n].pos, particle[i].pos, particle[n].h) *
+			particle[i].get_mass() * U_lj(particle[n].pos, particle[i].pos) / particle[i].density;
+	}
+	return ax * (-1) / particle[n].get_mass();
+}
+
+vec3 ax_inv_Eu(size_t n, std::vector<Particle>& particle, Kernel& kernel, Neighbour& neighbour)
+{
+	vec3 ax(0, 0, 0);
+
+
+#pragma omp parallel for reduction(+:ax)
+	for (size_t i : neighbour(n))
+	{
+		if (i != n)
+		{
+			ax += kernel.gradW(particle[n].pos, particle[i].pos, particle[n].h) *(particle[n].pressure / particle[n].density / particle[n].density +
+				 particle[i].pressure / particle[i].density / particle[i].density) * particle[i].get_mass();
+		}
 	}
 	return ax * (-1) / particle[n].get_mass();
 }

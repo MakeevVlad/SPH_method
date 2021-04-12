@@ -1,17 +1,28 @@
 #include "model.h"
 
-void eiler_scheme(std::vector<Particle>& particle, Kernel& kernel, double dt, size_t iteration)
+void eiler_scheme(std::vector<Particle>& particle, Kernel& kernel, double dt, size_t iteration, std::function<bool(vec3)> bounds)
 {
 	Neighbour neighbour(particle.size());
 	neighbour.init(particle);
+
+	refresh(particle, kernel, neighbour);
+
 	size_t n = 0;
+	#pragma omp parallel for
 	for (Particle& p : particle)
 	{
-		p.ax = ax(n, particle, kernel, neighbour);
+		p.ax = ax_inv_Eu(n, particle, kernel, neighbour);
+		++n;
+	}
+	for (Particle& p : particle)
+	{
 		p.vel += p.ax * dt;
 		p.pos += p.vel * dt;
-
-		++n;
+		if (bounds(p.pos))
+		{
+			p.vel = p.vel * (-1);
+			p.pos = p.vel * dt * (-1);
+		}
 	}
 }
 

@@ -13,7 +13,9 @@ void Neighbour::init(std::vector<Particle>& particle)
 		for (size_t j = i+1; j < particle.size(); ++j)
 		{
 
-			if (abs(particle[i].pos - particle[j].pos) < particle[0].h)
+			//if (abs(particle[i].pos - particle[j].pos) < 2*particle[0].h) 
+			//faster variant
+			if ((particle[i].pos - particle[j].pos).abssq() < 4 * particle[i].h * particle[i].h)
 			{
 				web[i].push_back(j);
 				web[j].push_back(i);

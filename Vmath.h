@@ -17,6 +17,7 @@ public:
 	vec3 operator+ (vec3);
 	vec3 operator+=(vec3&);
 	vec3 operator- (vec3);
+	vec3 operator-=(vec3&);
 	vec3 operator* (double);
 	vec3 operator/ (double);
 	double operator* (vec3);
@@ -28,6 +29,7 @@ public:
 	void set(vec3);
 
 	double abs();
+	double abssq();
 	
 	double proj(vec3); //Not checked!!!
 
