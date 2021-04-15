@@ -103,7 +103,7 @@ vec3 ax(size_t n, std::vector<Particle>& particle, Kernel& kernel, Neighbour& ne
 vec3 ax_inv_Eu(size_t n, std::vector<Particle>& particle, Kernel& kernel, Neighbour& neighbour)
 {
 	vec3 ax(0, 0, 0);
-
+	vec3 g(0, -5, 0);
 
 #pragma omp parallel for reduction(+:ax)
 	for (size_t i : neighbour(n))
@@ -114,7 +114,7 @@ vec3 ax_inv_Eu(size_t n, std::vector<Particle>& particle, Kernel& kernel, Neighb
 				 particle[i].pressure / particle[i].density / particle[i].density) * particle[i].get_mass();
 		}
 	}
-	return ax * (-1) / particle[n].get_mass();
+	return ax * (-1) / particle[n].get_mass() + g;
 }
 
 double U_lj(vec3 r1, vec3 r2)
@@ -136,5 +136,3 @@ bool nei(Particle& p0, Particle& p1)
 	else
 		return 0;
 }
-
-

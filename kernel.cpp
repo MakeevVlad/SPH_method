@@ -7,47 +7,37 @@
 #include <vector>
 #include <cmath>
 #include <ctime>
-
+#include <random>
 #include "model.h"
 
 bool bounds(vec3 pos)
 {
-	return 0;
+	return ((pos.x > 11) || (pos.x < -1) || (pos.y > 11) || (pos.y < -1));
 }
+
 
 int main()
 {
 
-	const int N = 6 * 18 + 4 * 6;
-	double dt = 0.001;
+	const int N = 400;
+	double k = 10 / sqrt(N);
+	double dt = 0.006;
 	
-	double t = 2;
+	double t = 20;
 
 	Kernel kernel(2);
 	std::vector<Particle> particle(N);
 
 
 	int c = 0;
-	for(double i = 0; i<6; ++i)
-		for (double j = 0; j < 18; ++j)
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> dis(-5, 5);
+	for (double i = 0; i < sqrt(N); ++i)
+		for (double j = 0; j < sqrt(N); ++j)
 		{
-			if((int)i % 2 == 0)
-				particle[c].set_pos(i*0.86, j + 0.5, 0);
-			else
-				particle[c].set_pos(i * 0.86, j, 0);
-			//particle[c].set_vel((rand() % 2 - 1) * 1, (rand() % 2 - 1) * 1, 0);
-			particle[c].set_prop(100, 1);
-			++c;
-			system("cls");
-			std::cout << "Getenrating particles: " << c << "/" << N << std::endl;
-		}
-
-	
-	for (double i = 0; i < 6; ++i)
-		for (double j = 0; j < 4; ++j)
-		{
-			particle[c].set_pos(i + 10, j + 6, 0);
-			particle[c].set_vel( -20, 0, 0);
+			particle[c].set_pos(i*k, j*k, 0);
+			particle[c].set_vel( dis(gen), dis(gen), 0);
 			particle[c].set_prop(25, 1);
 			++c;
 			system("cls");
@@ -81,7 +71,8 @@ int main()
 		++i;
 	}
 	unsigned int end_time = clock();
-	std::cout << std::endl << (end_time - start_time) / i;
+	std::cout << std::endl << "Full time: " << (end_time - start_time);
+	std::cout << std::endl << "Mean iteration time: " << (end_time - start_time) / i;
 
 	file.close();
 

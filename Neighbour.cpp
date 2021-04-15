@@ -17,6 +17,8 @@ void Neighbour::init(std::vector<Particle>& particle)
 			//faster variant
 			if ((particle[i].pos - particle[j].pos).abssq() < 4 * particle[i].h * particle[i].h)
 			{
+				web[i].push_back(i);
+				web[j].push_back(j);
 				web[i].push_back(j);
 				web[j].push_back(i);
 			}

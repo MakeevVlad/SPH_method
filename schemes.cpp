@@ -1,5 +1,10 @@
 #include "model.h"
 
+bool hole(vec3 pos)
+{
+	return ((pos.y > 4) && (pos.y < 6) && (pos.x > 11)) || pos.x > 11.1;
+}
+
 void eiler_scheme(std::vector<Particle>& particle, Kernel& kernel, double dt, size_t iteration, std::function<bool(vec3)> bounds)
 {
 	Neighbour neighbour(particle.size());
@@ -18,11 +23,29 @@ void eiler_scheme(std::vector<Particle>& particle, Kernel& kernel, double dt, si
 	{
 		p.vel += p.ax * dt;
 		p.pos += p.vel * dt;
-		if (bounds(p.pos))
+		size_t a = 0;
+		while(bounds(p.pos) && !hole(p.pos))
 		{
-			p.vel = p.vel * (-1);
-			p.pos = p.vel * dt * (-1);
+			if (a > 5)
+			{
+				std::cout << "Loop ";
+				break;
+			}
+			
+			if (p.pos.x > 11 || p.pos.x < -1)
+			{
+				p.vel.x *= -1;
+				p.pos.x += p.vel.x * dt;
+			}
+			if (p.pos.y > 11 || p.pos.y < -1)
+			{
+				p.vel.y *= -1;
+				p.pos.y += p.vel.y * dt;
+			}
+			a++;
 		}
+		
+
 	}
 }
 

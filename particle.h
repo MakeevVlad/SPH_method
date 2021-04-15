@@ -19,7 +19,7 @@ public:
 
 	double h = 3; //Smooth radius
 	double gamma = 1;
-	double A = 1; //Const dep on env
+	double A = 50; //Const dep on env
 
 	double get_mass();
 	double get_rad();
